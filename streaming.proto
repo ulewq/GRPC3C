@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package grpc.testing;
+
+message ServerInfo {
+  string session_id = 1;
+  string media = 2;
+}
+
+message ServerState {
+  enum State {
+    // The default state.
+    UNDEFINED = 0;
+    // The call is newly created.
+    CONNECTED = 1;
+    // The call is connected.
+    STREAMING = 6;
+    // The call is finished.
+    ENDED = 7;
+  }
+  State state = 1;
+}
+
+message StreamingRequest {
+  string ip_address = 1;
+  string port = 2;
+}
+
+message StreamingResponse {
+  oneof stream_call_response {
+    ServerInfo call_info = 1;
+    ServerState call_state = 2;
+  } 
+}
+
+service StreamServer {
+  // Makes a phone call and communicate states via a stream.
+  rpc Streaming(stream StreamingRequest) returns (stream StreamingResponse);
+}
